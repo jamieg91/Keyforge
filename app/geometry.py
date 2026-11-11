@@ -97,9 +97,10 @@ def generate(name,opts,svg_bytes=None,font_bytes=None):
     height=float(opts.get('height',17))
     base_h=float(opts.get('baseHeight',2.4));mid_h=float(opts.get('midHeight',0.8));top_h=float(opts.get('topHeight',0.8))
     base_margin=float(opts.get('baseMargin',4.8));mid_margin=float(opts.get('midMargin',2.3))
+    border_enabled=opts.get('borderEnabled',True) not in (False,0,'false','False','0')
     hole_r=float(opts.get('holeDiameter',4))/2
     tab_padding=float(opts.get('tabPadding',2.0))
-    if not(10<=height<=40 and 0.4<=base_h<=8 and 0.4<=mid_h<=6 and 0.4<=top_h<=6 and 1<=base_margin<=12 and 0.4<=mid_margin<=base_margin and 2<=hole_r*2<=8 and 1.5<=tab_padding<=4):
+    if not(10<=height<=40 and 0.4<=base_h<=8 and (not border_enabled or 0.4<=mid_h<=6) and 0.4<=top_h<=6 and 1<=base_margin<=12 and (not border_enabled or 0.4<=mid_margin<=base_margin) and 2<=hole_r*2<=8 and 1.5<=tab_padding<=4):
         raise ValueError('A dimension is outside its allowed range')
     shape=text_shape(name,opts.get('font','DejaVu Sans'),height,font_bytes)
     if svg_bytes:
@@ -108,7 +109,7 @@ def generate(name,opts,svg_bytes=None,font_bytes=None):
         icon=affinity.translate(icon,xoff=shape.bounds[2]+gap,yoff=(shape.bounds[3]-icon.bounds[3])/2)
         shape=unary_union([shape,icon])
     if shape.bounds[2]>220:raise ValueError('Result exceeds 220mm wide')
-    mid=shape.buffer(mid_margin,join_style=1,resolution=8)
+    mid=shape.buffer(mid_margin,join_style=1,resolution=8) if border_enabled else None
     if opts.get('baseShape','outline')=='rectangle':
         minx,miny,maxx,maxy=shape.bounds
         base=box(minx-base_margin,miny-base_margin,maxx+base_margin,maxy+base_margin).buffer(1).buffer(-1)
@@ -148,11 +149,16 @@ def generate(name,opts,svg_bytes=None,font_bytes=None):
         dim=base.bounds[2]-base.bounds[0] if fit=='width' else base.bounds[3]-base.bounds[1]
         factor=target/dim
         base=affinity.scale(base,xfact=factor,yfact=factor,origin=(0,0))
-        mid=affinity.scale(mid,xfact=factor,yfact=factor,origin=(0,0))
+        if border_enabled:
+            mid=affinity.scale(mid,xfact=factor,yfact=factor,origin=(0,0))
         shape=affinity.scale(shape,xfact=factor,yfact=factor,origin=(0,0))
     if base.bounds[2]-base.bounds[0]>240 or base.bounds[3]-base.bounds[1]>240:raise ValueError('Keychain exceeds 240mm')
     meshes=[]
-    for label,poly,z,h in [('Base',base,0,base_h),('Border',mid,base_h,mid_h),('Letters',shape,base_h+mid_h,top_h)]:
+    layers=[('Base',base,0,base_h)]
+    if border_enabled:
+        layers.append(('Border',mid,base_h,mid_h))
+    layers.append(('Letters',shape,base_h+(mid_h if border_enabled else 0),top_h))
+    for label,poly,z,h in layers:
         mesh=extrude(poly,z,h)
         if mesh is None:raise ValueError('Could not produce printable geometry')
         meshes.append((label,mesh))

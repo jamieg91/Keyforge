@@ -96,9 +96,10 @@ def extrude(geom,z,height):
 def generate(name,opts,svg_bytes=None,font_bytes=None):
     height=float(opts.get('height',17))
     base_h=float(opts.get('baseHeight',2.4));mid_h=float(opts.get('midHeight',0.8));top_h=float(opts.get('topHeight',0.8))
-    base_margin=float(opts.get('baseMargin',3.5));mid_margin=float(opts.get('midMargin',1.7))
+    base_margin=float(opts.get('baseMargin',4.8));mid_margin=float(opts.get('midMargin',2.3))
     hole_r=float(opts.get('holeDiameter',4))/2
-    if not(10<=height<=40 and 0.4<=base_h<=8 and 0.4<=mid_h<=6 and 0.4<=top_h<=6 and 1<=base_margin<=10 and 0.4<=mid_margin<=base_margin and 2<=hole_r*2<=8):
+    tab_padding=float(opts.get('tabPadding',2.0))
+    if not(10<=height<=40 and 0.4<=base_h<=8 and 0.4<=mid_h<=6 and 0.4<=top_h<=6 and 1<=base_margin<=12 and 0.4<=mid_margin<=base_margin and 2<=hole_r*2<=8 and 1.5<=tab_padding<=4):
         raise ValueError('A dimension is outside its allowed range')
     shape=text_shape(name,opts.get('font','DejaVu Sans'),height,font_bytes)
     if svg_bytes:
@@ -113,16 +114,33 @@ def generate(name,opts,svg_bytes=None,font_bytes=None):
         base=box(minx-base_margin,miny-base_margin,maxx+base_margin,maxy+base_margin).buffer(1).buffer(-1)
     else:base=shape.buffer(base_margin,join_style=1,resolution=10)
     if opts.get('hole',True):
+        # Put the tab into the upper-left corner of the FIRST letter,
+        # rather than on the global top edge of the whole name.
         minx,miny,maxx,maxy=base.bounds
-        pos=opts.get('holePosition','left')
-        if pos=='top':
-            x=(minx+maxx)/2;y=maxy+hole_r+0.8
+        outer_r=hole_r+tab_padding
+        pos=opts.get('holePosition','top_left')
+        local_left=base.intersection(box(minx-1,miny-1,minx+max(outer_r*3,height*0.85),maxy+1))
+        left_top=local_left.bounds[3] if not local_left.is_empty else maxy
+        local_right=base.intersection(box(maxx-max(outer_r*3,height*0.85),miny-1,maxx+1,maxy+1))
+        right_top=local_right.bounds[3] if not local_right.is_empty else maxy
+        if pos in ('top_left','left'):
+            x=minx+outer_r*0.8
+            y=left_top+outer_r*0.35
+        elif pos in ('top_right','right'):
+            x=maxx-outer_r*0.8
+            y=right_top+outer_r*0.35
+        elif pos in ('top_center','top'):
+            x=(minx+maxx)/2
+            y=maxy+outer_r*0.55
         else:
-            x=minx+base_margin*.9 if pos=='left' else maxx-base_margin*.9
-            y=maxy+(hole_r+1.5)*.55
-        outer=Point(x,y).buffer(hole_r+2,resolution=32)
+            raise ValueError('Unknown hole position')
+        outer=Point(x,y).buffer(outer_r,resolution=32)
         hole=Point(x,y).buffer(hole_r,resolution=32)
-        base=base.union(outer).difference(hole)
+        # Avoid floating tabs disconnected from the keychain backing.
+        joined=base.union(outer)
+        if len(polygons(joined))!=1:
+            raise ValueError('Keyring tab is disconnected; try a larger tab padding')
+        base=joined.difference(hole)
     fit=opts.get('physicalMode','auto')
     if fit in ('width','height'):
         target=float(opts.get('physicalSize',65))

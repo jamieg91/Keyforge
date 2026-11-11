@@ -10,14 +10,22 @@ def to_3mf(meshes,colors=None):
     root=ET.Element('{%s}model'%CORE,{'unit':'millimeter','xml:lang':'en-US'})
     resources=ET.SubElement(root,'{%s}resources'%CORE)
     mats=ET.SubElement(resources,'{%s}basematerials'%CORE,{'id':'1'})
-    for i,name in enumerate(['Base','Border','Letters']):
+    # Only include actually-used layers; two-colour exports contain two materials
+    # and two physical objects, rather than a hidden or zero-height middle layer.
+    all_layers=['Base','Border','Letters']
+    used_layers=[layer for layer in all_layers if any(name.endswith(layer) for name,_ in meshes)]
+    if not used_layers:raise ValueError('No layers to export')
+    for name in used_layers:
+        i=all_layers.index(name)
         color=colors[i] if isinstance(colors,list) and i<len(colors) else COLORS[i]
         if not isinstance(color,str) or not re.fullmatch('#[0-9a-fA-F]{6}',color):color=COLORS[i]
         ET.SubElement(mats,'{%s}base'%CORE,{'name':name,'displaycolor':color.upper()+'FF'})
     build=ET.SubElement(root,'{%s}build'%CORE)
     for i,(name,mesh) in enumerate(meshes):
         objid=i+2
-        layer=next((j for j,layer in enumerate(['Base','Border','Letters']) if name.endswith(layer)),i%3)
+        matched=next((layer for layer in used_layers if name.endswith(layer)),None)
+        if matched is None:raise ValueError('Unexpected layer: '+name)
+        layer=used_layers.index(matched)
         obj=ET.SubElement(resources,'{%s}object'%CORE,{'id':str(objid),'type':'model','name':name,'pid':'1','pindex':str(layer)})
         geo=ET.SubElement(obj,'{%s}mesh'%CORE)
         vertices=ET.SubElement(geo,'{%s}vertices'%CORE)

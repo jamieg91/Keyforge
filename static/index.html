@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>KeyForge • Layered by JL</title>
+<style>
+:root{--bg:#102d26;--panel:#173f34;--panel2:#214c40;--edge:#628176;--ivory:#fff8e9;--peach:#f3a58b;--muted:#b3cbc0}*{box-sizing:border-box}body{margin:0;color:var(--ivory);background:radial-gradient(circle at 50% 0,#275a4a,var(--bg) 65%);font:15px/1.45 system-ui,-apple-system,sans-serif}header{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;border-bottom:1px solid #ffffff30}h1{margin:0;font:700 30px Georgia,serif;letter-spacing:.2px}header small{color:var(--muted)}main{display:grid;grid-template-columns:minmax(260px,335px) minmax(350px,1fr) minmax(260px,300px);gap:14px;max-width:1640px;margin:14px auto;padding:0 14px}.column{display:flex;flex-direction:column;gap:14px}section{background:#143a30e8;border:1px solid #74958987;border-radius:15px;padding:16px;box-shadow:0 10px 40px #0002}section h2{margin:0 0 14px;font-size:16px}label{display:block;margin:10px 0 5px;font-size:13px;color:#f8f5ec}input,textarea,select{width:100%;background:#0b2923;color:var(--ivory);border:1px solid var(--edge);padding:10px 12px;border-radius:8px;font:inherit}input[type=color]{height:38px;padding:3px;cursor:pointer}input[type=checkbox]{width:auto;accent-color:var(--peach)}input[type=file]{font-size:12px}textarea{resize:vertical;min-height:110px}button{border:1px solid #66887b;color:var(--ivory);background:var(--panel2);padding:10px 12px;border-radius:9px;font-weight:600;cursor:pointer}button:hover{filter:brightness(1.15)}button.primary{color:#1c382f;background:var(--peach);border-color:var(--peach)}button:disabled{opacity:.6}.inline{display:flex;gap:8px;align-items:center}.inline>*{min-width:0;flex:1}.colors{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.colors label{margin:4px 0}.colors small{display:block;color:var(--muted)}.preview{height:min(63vh,640px);min-height:340px;position:relative;overflow:hidden;border-radius:11px;background:radial-gradient(circle,#f1e9dc 0,#c4baaa 100%)}canvas{display:block;width:100%;height:100%}.overlay{position:absolute;bottom:12px;left:12px;background:#103126d9;color:var(--ivory);border-radius:8px;padding:8px 10px;font-size:12px;max-width:85%}.bottom{display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap;margin-top:12px;color:var(--muted);font-size:13px}#status{font-size:12px;color:var(--muted);min-height:18px}.hint{font-size:12px;color:var(--muted);margin-top:6px}.toolbar{display:flex;align-items:center;justify-content:space-between;gap:8px}button.full{width:100%;margin:6px 0}.icon{font-size:21px;color:var(--peach)}@media(max-width:1100px){main{grid-template-columns:330px 1fr}.right{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;align-items:start}}@media(max-width:700px){main{display:flex;flex-direction:column}.preview{height:350px;min-height:350px}.right{display:flex;flex-direction:column}header{padding:14px}h1{font-size:25px}main .center{order:-1}}
+</style></head>
+<body><header><div><h1><span class="icon">◇</span> KeyForge</h1><small>3D Keychain Generator · Layered by JL</small></div><span>✦ Personalised • 3D Printed</span></header>
+<main>
+<div class="column">
+<section><h2>Text & Artwork</h2><label>Keychain name</label><input id="name" value="OLIVER" maxlength="35"><label>Font</label><select id="font"><option>DejaVu Sans</option><option>Liberation Sans</option><option>Liberation Serif</option><option>DejaVu Sans Mono</option></select><label>Upload custom TTF or OTF font</label><input type="file" id="fontFile" accept=".ttf,.otf"><label>Symbol</label><select id="symbol"><option value="">None</option><option value="heart">♥ Heart</option><option value="star">★ Star</option><option value="bolt">⚡ Lightning</option></select><label>Or upload SVG artwork</label><input type="file" id="svgFile" accept=".svg,image/svg+xml"><div class="hint">SVG is treated as flat vector artwork beside the name.</div></section>
+<section><h2>Keychain Style</h2><label>Backing shape</label><select id="baseShape"><option value="outline">Text outline</option><option value="rectangle">Rectangle</option></select><label>Ring position</label><select id="holePosition"><option value="left">Left</option><option value="right">Right</option><option value="top">Top</option></select><label>Hole diameter (mm)</label><input type="number" id="holeDiameter" value="4" min="2" max="8" step=".5"><label>Text height (mm)</label><input type="number" id="height" value="17" min="10" max="40"></section>
+<section><h2>Layers & Thickness</h2><div class="colors"><div><small>Base</small><input type="color" id="baseColor" value="#193d32"></div><div><small>Border</small><input type="color" id="borderColor" value="#f3a58b"></div><div><small>Letters</small><input type="color" id="textColor" value="#fff8e9"></div></div><label>Base thickness (mm)</label><input type="number" id="baseHeight" value="2.4" min=".4" max="8" step=".2"><label>Border thickness (mm)</label><input type="number" id="midHeight" value=".8" min=".4" max="6" step=".2"><label>Letters thickness (mm)</label><input type="number" id="topHeight" value=".8" min=".4" max="6" step=".2"><label>Base outline (mm)</label><input type="number" id="baseMargin" value="3.5" min="1" max="10" step=".5"><label>Border outline (mm)</label><input type="number" id="midMargin" value="1.7" min=".4" max="10" step=".1"></section>
+<section><h2>Physical Size</h2><label>Sizing mode</label><select id="physicalMode"><option value="auto">Auto, based on text</option><option value="width" selected>Exact overall width</option><option value="height">Exact overall height</option></select><label>Target size (mm)</label><input type="number" id="physicalSize" value="65" min="15" max="220"><div class="hint">Proportions are preserved. Exact sizing scales the ring hole as well.</div></section>
+</div>
+<div class="column center">
+<section><div class="toolbar"><h2>Interactive 3D Preview</h2><div><button id="refresh" class="primary">↻ Generate Preview</button><button id="resetView">Reset View</button></div></div><div class="preview" id="preview"><div class="overlay" id="previewInfo">Generate a preview to see your keychain</div></div><div class="bottom"><span id="dims">Width — · Height — · Thickness —</span><span>Drag to rotate · Scroll/pinch to zoom</span></div><p id="status"></p></section>
+</div>
+<div class="column right">
+<section><h2>Saved Profiles</h2><label>Profile name</label><input id="profileName" placeholder="e.g. Kids name tag"><button class="primary full" id="saveProfile">Save Current Profile</button><label>Load profile</label><select id="profileSelect"><option value="">Choose a saved profile</option></select><div class="inline"><button id="loadProfile">Load</button><button id="deleteProfile">Delete</button></div><div class="inline"><button id="backupProfiles">Back up</button><button id="restoreProfiles">Restore</button></div><input type="file" id="profileBackup" accept=".json" hidden><div class="hint">Profiles are saved in this browser. Back up to share between devices.</div></section>
+<section><h2>Batch Generation</h2><label>One name per line (up to 50)</label><textarea id="names" placeholder="OLIVER&#10;ANNA&#10;JACK"></textarea><label>Bed size (mm)</label><input type="number" id="bedSize" value="256" min="100" max="400"><label>Spacing between pieces (mm)</label><input type="number" id="plateSpacing" value="8" min="2" max="30"><label><input type="checkbox" id="plate"> Arrange on a single print bed</label><div class="hint">Blank batch list exports the current name. Batch output is a ZIP, or a single laid-out 3MF when bed layout is enabled.</div></section>
+<section><h2>Export Printable Files</h2><button class="primary full" id="export3mf">⬡ Export Multi-Colour 3MF</button><button class="full" id="exportStl">⬡ Export STL</button><div class="hint">3MF contains three distinct aligned parts with assigned display colours; select AMS slots in Bambu Studio.</div></section>
+</div></main>
+<script type="module">
+import * as THREE from 'https://esm.sh/three@0.180.0';
+import {OrbitControls} from 'https://esm.sh/three@0.180.0/addons/controls/OrbitControls.js';
+const $=id=>document.getElementById(id);
+const ids=['font','baseShape','holePosition','holeDiameter','height','baseHeight','midHeight','topHeight','baseMargin','midMargin','physicalMode','physicalSize','bedSize','plateSpacing','baseColor','borderColor','textColor','symbol'];
+const message=t=>$('status').textContent=t;
+function options(){let o={};ids.forEach(id=>{let v=$(id).value;o[id]=['font','baseShape','holePosition','physicalMode','symbol','baseColor','borderColor','textColor'].includes(id)?v:Number(v)});o.colors=[o.baseColor,o.borderColor,o.textColor];return o;}
+function symbolSVG(s){let p=s==='heart'?'<path d="M50 88 L14 53 C-11 25 22 -7 50 28 C78 -7 111 25 86 53 Z"/>':s==='star'?'<path d="M50 4 L63 36 L98 38 L71 61 L79 96 L50 77 L21 96 L29 61 L2 38 L37 36 Z"/>':'<path d="M54 1 L18 54 H46 L37 99 L83 39 H55 Z"/>';return new File(['<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">'+p+'</svg>'],'symbol.svg',{type:'image/svg+xml'});}
+function form(names,fmt){let f=new FormData();f.set('names',names);f.set('name',names.split('\n')[0]);f.set('settings',JSON.stringify(options()));f.set('format',fmt);f.set('plate',$('plate').checked?'true':'false');let svg=$('svgFile').files[0]||($('symbol').value?symbolSVG($('symbol').value):null);if(svg)f.set('svg',svg);if($('fontFile').files[0])f.set('font',$('fontFile').files[0]);return f;}
+let scene,camera,renderer,controls,model;
+function init3d(){
+ const area=$('preview');scene=new THREE.Scene();scene.background=new THREE.Color('#d4c7b4');
+ camera=new THREE.PerspectiveCamera(42,1,.1,5000);camera.position.set(0,-70,65);
+ renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));area.prepend(renderer.domElement);
+ controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;
+ scene.add(new THREE.HemisphereLight(0xffffff,0x756e5b,2.1));
+ const sun=new THREE.DirectionalLight(0xffffff,3);sun.position.set(30,-40,80);scene.add(sun);
+ const resize=()=>{const w=area.clientWidth,h=area.clientHeight;renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix()};new ResizeObserver(resize).observe(area);resize();
+ function loop(){requestAnimationFrame(loop);controls.update();renderer.render(scene,camera)}loop()
+}
+function centerView(){
+ if(!model)return;const box=new THREE.Box3().setFromObject(model),s=box.getSize(new THREE.Vector3()),c=box.getCenter(new THREE.Vector3());controls.target.copy(c);camera.position.set(c.x,c.y-Math.max(s.x*1.1,35),c.z+Math.max(s.x*.7,24));camera.near=.1;camera.far=5000;camera.updateProjectionMatrix();controls.update();
+}
+async function preview(){
+ message('Generating 3D geometry…');$('refresh').disabled=true;
+ try{
+  const r=await fetch('/api/preview',{method:'POST',body:form($('name').value,'3mf')});const data=await r.json();if(!r.ok)throw Error(data.detail||'Preview failed');
+  if(model){scene.remove(model);model.traverse(o=>{o.geometry?.dispose();o.material?.dispose()})}
+  model=new THREE.Group();const colors=options().colors;
+  data.meshes.forEach((m,i)=>{
+   const verts=new Float32Array(m.vertices.flat()),inds=new Uint32Array(m.faces.flat());
+   const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(verts,3));g.setIndex(new THREE.BufferAttribute(inds,1));g.computeVertexNormals();
+   const mesh=new THREE.Mesh(g,new THREE.MeshStandardMaterial({color:colors[i]||'#ffffff',metalness:.08,roughness:.7,side:THREE.DoubleSide}));model.add(mesh);
+  });
+  scene.add(model);centerView();const d=data.dimensions;$('dims').textContent='Width '+d.width+' mm · Height '+d.height+' mm · Thickness '+d.depth+' mm';$('previewInfo').textContent=$('name').value+' · '+data.meshes.length+' parts';message('3D preview ready');
+ }catch(e){message('Preview error: '+e.message)}finally{$('refresh').disabled=false}
+}
+async function exportFile(fmt){
+ let names=$('names').value.trim()||$('name').value.trim();if(!names){message('Enter at least one name');return}
+ message('Generating '+fmt.toUpperCase()+'…');
+ try{
+  const r=await fetch('/api/export',{method:'POST',body:form(names,fmt)});if(!r.ok){let e=await r.json();throw Error(e.detail||'Export failed')}
+  let cd=r.headers.get('content-disposition')||'';let filename=cd.match(/filename="([^"]+)"/)?.[1]||'keyforge.'+fmt;
+  let url=URL.createObjectURL(await r.blob());let a=document.createElement('a');a.href=url;a.download=filename;a.click();setTimeout(()=>URL.revokeObjectURL(url),10000);message('Exported '+filename);
+ }catch(e){message('Export error: '+e.message)}
+}
+const storage='keyforge-profiles-v2';
+function profiles(){try{return JSON.parse(localStorage.getItem(storage))||{}}catch{return {}}}
+function saveProfiles(p){localStorage.setItem(storage,JSON.stringify(p));renderProfiles()}
+function renderProfiles(){let sel=$('profileSelect'),current=sel.value;sel.innerHTML='<option value="">Choose a saved profile</option>';Object.keys(profiles()).sort().forEach(k=>{let o=document.createElement('option');o.value=k;o.textContent=k;sel.append(o)});sel.value=current}
+function save(){let n=$('profileName').value.trim();if(!n){message('Enter a profile name');return}let p=profiles();p[n]=options();p[n].name=$('name').value;p[n].names=$('names').value;saveProfiles(p);$('profileSelect').value=n;message('Profile saved in this browser')}
+function load(){let p=profiles()[$('profileSelect').value];if(!p)return;ids.forEach(id=>{if(p[id]!==undefined)$(id).value=p[id]});$('name').value=p.name||'OLIVER';$('names').value=p.names||'';$('profileName').value=$('profileSelect').value;preview();message('Profile loaded')}
+function backup(){let b=new Blob([JSON.stringify(profiles(),null,2)],{type:'application/json'});let u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download='keyforge-profiles.json';a.click();setTimeout(()=>URL.revokeObjectURL(u),10000)}
+$('saveProfile').onclick=save;$('loadProfile').onclick=load;$('deleteProfile').onclick=()=>{let k=$('profileSelect').value;if(k){let p=profiles();delete p[k];saveProfiles(p);message('Profile deleted')}};$('backupProfiles').onclick=backup;$('restoreProfiles').onclick=()=>$('profileBackup').click();
+$('profileBackup').onchange=async e=>{try{let p=JSON.parse(await e.target.files[0].text());if(!p||typeof p!=='object'||Array.isArray(p))throw Error('Invalid profile file');saveProfiles({...profiles(),...p});message('Profiles restored')}catch(e){message('Restore failed: '+e.message)}};
+$('refresh').onclick=preview;$('resetView').onclick=centerView;$('export3mf').onclick=()=>exportFile('3mf');$('exportStl').onclick=()=>exportFile('stl');$('name').addEventListener('keydown',e=>{if(e.key==='Enter')preview()});renderProfiles();try{init3d();preview()}catch(e){message('Could not load interactive preview: '+e.message)}
+</script>
+</body></html>

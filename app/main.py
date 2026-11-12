@@ -7,7 +7,7 @@ from .geometry import generate
 from .exports import to_3mf,to_stl
 import numpy as np
 
-app=FastAPI(title="KeyForge v0.2")
+app=FastAPI(title="KeyForge v0.5")
 @app.middleware("http")
 async def require_password(request:Request,call_next):
     if request.url.path=='/api/health':return await call_next(request)
@@ -31,7 +31,7 @@ app.mount('/static',StaticFiles(directory=STATIC),name='static')
 @app.get('/')
 def home():return FileResponse(STATIC/'index.html')
 @app.get('/api/health')
-def health():return {'ok':True,'version':'0.2'}
+def health():return {'ok':True,'version':'0.5'}
 
 def parse(names,settings,fmt):
     opts=json.loads(settings)

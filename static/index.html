@@ -77,7 +77,7 @@ function init3d(){
  function loop(){requestAnimationFrame(loop);controls.update();renderer.render(scene,camera)}loop()
 }
 function centerView(){
- if(!model)return;const box=new THREE.Box3().setFromObject(model),s=box.getSize(new THREE.Vector3()),c=box.getCenter(new THREE.Vector3());controls.target.copy(c);camera.position.set(c.x,c.y-Math.max(s.x*1.1,35),c.z+Math.max(s.x*.7,24));camera.near=.1;camera.far=5000;camera.updateProjectionMatrix();controls.update();
+ if(!model)return;const b=new THREE.Box3().setFromObject(model),size=b.getSize(new THREE.Vector3()),c=b.getCenter(new THREE.Vector3());const halfFov=THREE.MathUtils.degToRad(camera.fov/2),fitY=size.y/(2*Math.tan(halfFov)),fitX=size.x/(2*Math.tan(halfFov)*camera.aspect);const dist=Math.max(fitX,fitY,size.z*3,24)*1.7;controls.target.copy(c);camera.position.set(c.x,c.y-dist*.28,c.z+dist*.96);camera.near=.1;camera.far=5000;camera.updateProjectionMatrix();controls.update();
 }
 async function preview(){
  if(!validation())return;
